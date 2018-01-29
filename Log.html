@@ -1,0 +1,78 @@
+<div id="newsfeed-container">
+    <div class="row">
+        <div class="create-travelogue-container" id="user-post-container">
+            <div class="col-sm-4">
+                <div class="card card-outline-success mb-3 post-card" id="travelogue-saved-container">
+                    @using (Ajax.BeginForm("CreatePost", "Posts", null,
+                        new AjaxOptions() { HttpMethod = "POST", InsertionMode = InsertionMode.InsertBefore, UpdateTargetId = "newsfeed-list" },
+                        new { @id = "post-form", enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="travelogue-image-container">
+                            <img id="post-image-preview" class="travelogue-caption-image" src="#" alt="your image" />
+                            <div class="no-image-container">
+                                <input type="file" id="postPhoto" class="input-file" name="postPhoto" accept="image/*" data-multiple-caption="{count} Photos " multiple onchange="enableSubmit()" />
+                                <label class="text-center" for="postPhoto">
+                                    <span>Add Photo (Required)</span>
+                                    <i class="fa fa-picture-o travelogue-photo-icon"></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="card-block travelogue-caption-text">
+                            <div class="form-group">
+                                @Html.TextAreaFor(model => model.Caption, new
+                           {
+                               @class = "form-control",
+                               @id = "post-textarea",
+                               placeholder = "What would you like to share?",
+                               rows = 4,
+                               maxlength = 1000,
+                               oninput = "checkPostLength()"
+                           })
+
+                            </div>
+
+                        </div>
+                        <div class="post-error" id="post-count-status" style="display: inline-block; margin: 2px;"></div>
+                        <div class="card-footer text-muted">
+                            <h5>Create new travelogue</h5>
+                            <div class="form-group inline-block" style="width: 30%">
+                                <input type="button" onclick="SubmitPost()" value="Submit" class="btn btn-xs" id="user-newsfeed-btn" data-toggle="tooltip" data-placement="top" title="A photo is required!" disabled />
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- <hr /> -->
+        <div id="newsfeed-list">
+
+            @{Html.RenderAction("_Newsfeed", "Posts");}
+        </div> <!--*/ newsfeed-list -->
+    </div>
+</div> <!--*/ newsfeed-container -->
+
+<script>
+    function checkPostLength() {
+        var comment = $('#post-textarea').val();
+        if (comment.length >= 1000) {
+            $('#post-count-status').text('0 characters remaining').show();
+            $('#post-count-status').css('color', 'red');
+        } else if (comment.length >= 0) {
+            var remaining = 1000 - comment.length;
+            $('#post-count-status').text(remaining + ' characters remaining').show();
+            $('#post-count-status').css('color', 'black');
+        }
+    }
+
+    function enableSubmit() {
+        $('#user-newsfeed-btn').prop('disabled', false);
+        $('#user-newsfeed-btn').tooltip('disable');
+    }
+</script>
